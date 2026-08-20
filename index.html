@@ -1,29 +1,171 @@
-<html>
-<head>
-<meta http-equiv="Content_Type" content="text/html; charset=utf-8/">
+<?php
+// ==========================================
+// CONFIGURACIÓN DE LA BASE DE DATOS
+// ==========================================
 
-<title>  </title>
-<link href="style.css" rel="stylesheet" />
+$servidor = "sql-tilin.database.windows.net";
+$base_datos = "BD-BENITO";
+$usuario = "TU_USUARIO";
+$password = "TU_CONTRASEÑA";
+
+// ==========================================
+// CONEXIÓN A AZURE SQL
+// ==========================================
+
+$serverName = "tcp:" . $servidor . ",1433";
+
+$connectionOptions = array(
+    "Database" => $base_datos,
+    "Uid" => $usuario,
+    "PWD" => $password,
+    "Encrypt" => true,
+    "TrustServerCertificate" => false
+);
+
+$conn = sqlsrv_connect($serverName, $connectionOptions);
+
+if ($conn === false) {
+    die("Error al conectar con la base de datos.");
+}
+
+// ==========================================
+// CONSULTA
+// ==========================================
+
+$sql = "SELECT ID_ESTUDIANTE, NOMBRE, MATERIA, CARNE, IMAGEN
+        FROM dbo.ESTUDIANTES";
+
+$stmt = sqlsrv_query($conn, $sql);
+
+if ($stmt === false) {
+    die("Error al realizar la consulta.");
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Actividad Práctica 2</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .materia {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 
 <body>
-<div id="titulo"><h2> ELLA NO TE AMA </h2>
+
+<div class="contenedor">
+
+    <h1>ACTIVIDAD PRÁCTICA 2</h1>
+
+    <div class="materia">
+        <h2>Base de Datos</h2>
+        <p>Estudiantes registrados en Azure SQL Database</p>
+    </div>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Materia</th>
+            <th>Carné</th>
+            <th>Imagen</th>
+        </tr>
+
+        <?php while ($fila = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) { ?>
+
+            <tr>
+
+                <td>
+                    <?php echo $fila['ID_ESTUDIANTE']; ?>
+                </td>
+
+                <td>
+                    <?php echo htmlspecialchars($fila['NOMBRE']); ?>
+                </td>
+
+                <td>
+                    <?php echo htmlspecialchars($fila['MATERIA']); ?>
+                </td>
+
+                <td>
+                    <?php echo htmlspecialchars($fila['CARNE']); ?>
+                </td>
+
+                <td>
+
+                    <?php if (!empty($fila['IMAGEN'])) { ?>
+
+                        <img src="<?php echo htmlspecialchars($fila['IMAGEN']); ?>">
+
+                    <?php } else { ?>
+
+                        Sin imagen
+
+                    <?php } ?>
+
+                </td>
+
+            </tr>
+
+        <?php } ?>
+
+    </table>
+
 </div>
-<div id="cuadro">
-<h4>Benito Martinez</h4>
-<h5>BM202323</h5>
-</div>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<center>
-<img src="Barcelona.png" style="width:220px; height:200px">
-</center> 
-<footer>ASR104 Administracion de servicios en plataformas Propietarias </footer>
-<br/>
+
 </body>
 </html>
 
-
+<?php
+sqlsrv_free_stmt($stmt);
+sqlsrv_close($conn);
+?>
