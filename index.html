@@ -8,7 +8,6 @@
     <title>Actividad Práctica 2</title>
 
     <style>
-
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -23,122 +22,37 @@
         }
 
         .contenedor {
-            width: 80%;
+            width: 90%;
             margin: 30px auto;
-            background-color: white;
-            padding: 30px;
+            background: white;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 0 10px #ccc;
-            text-align: center;
         }
 
-        button {
-            background-color: #0078d4;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #005a9e;
-        }
-
-        #resultado {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        table {
+        iframe {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            height: 500px;
+            border: none;
         }
-
-        th {
-            background-color: #0078d4;
-            color: white;
-            padding: 12px;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background-color: #f2f2f2;
-        }
-
     </style>
 </head>
 
 <body>
 
-<header>
+    <header>
+        <h1>ACTIVIDAD PRÁCTICA 2</h1>
+        <p>Consulta de estudiantes desde Azure SQL</p>
+    </header>
 
-    <h1>ACTIVIDAD PRÁCTICA 2</h1>
+    <div class="contenedor">
 
-    <p>Base de datos en Azure</p>
+        <h2>Información de estudiantes</h2>
 
-</header>
+        <!-- Aquí aparecerá el resultado del PHP -->
+        <iframe src="estudiantes.php"></iframe>
 
-
-<div class="contenedor">
-
-    <h2>Consulta de estudiantes</h2>
-
-    <p>
-        Presiona el botón para consultar los datos
-        almacenados en Azure SQL Database.
-    </p>
-
-    <button onclick="cargarEstudiantes()">
-        Mostrar estudiantes
-    </button>
-
-    <div id="resultado"></div>
-
-</div>
-
-
-<script>
-
-function cargarEstudiantes() {
-
-    document.getElementById("resultado").innerHTML =
-        "<p>Cargando información...</p>";
-
-    fetch("estudiantes.php")
-
-        .then(response => {
-
-            if (!response.ok) {
-                throw new Error("Error al conectar con PHP");
-            }
-
-            return response.text();
-
-        })
-
-        .then(data => {
-
-            document.getElementById("resultado").innerHTML = data;
-
-        })
-
-        .catch(error => {
-
-            document.getElementById("resultado").innerHTML =
-                "<p style='color:red;'>Error: " + error.message + "</p>";
-
-        });
-
-}
-
-</script>
+    </div>
 
 </body>
 
