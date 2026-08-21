@@ -1,168 +1,78 @@
-<?php
-
-// Datos de conexión a Azure SQL
-$serverName = "sql-tilin.database.windows.net";
-$database = "BD-BENITO";
-$username = "adminsql";
-$password = "mVqivAdd1234";
-
-// Crear conexión
-$connectionInfo = array(
-    "Database" => $database,
-    "UID" => $username,
-    "PWD" => $password,
-    "CharacterSet" => "UTF-8"
-);
-
-$conn = sqlsrv_connect($serverName, $connectionInfo);
-
-// Verificar conexión
-if ($conn === false) {
-    die("Error al conectar con Azure SQL:<br>" . print_r(sqlsrv_errors(), true));
-}
-
-// Consulta
-$sql = "SELECT ID_ESTUDIANTE, NOMBRE, MATERIA, CARNE, IMAGEN
-        FROM dbo.ESTUDIANTES";
-
-$stmt = sqlsrv_query($conn, $sql);
-
-// Verificar consulta
-if ($stmt === false) {
-    die("Error en la consulta:<br>" . print_r(sqlsrv_errors(), true));
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Actividad Práctica 2</title>
 
     <style>
+
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
-            margin: 0;
-            padding: 0;
         }
 
         header {
             background-color: #0078d4;
             color: white;
             text-align: center;
-            padding: 25px;
+            padding: 40px;
         }
 
         .contenedor {
-            width: 80%;
-            margin: 30px auto;
+            width: 70%;
+            margin: 50px auto;
             background-color: white;
-            padding: 25px;
+            padding: 40px;
+            text-align: center;
             border-radius: 10px;
-            box-shadow: 0 0 10px #ccc;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th {
+        .boton {
+            display: inline-block;
+            padding: 15px 30px;
             background-color: #0078d4;
             color: white;
-            padding: 12px;
+            text-decoration: none;
+            border-radius: 5px;
         }
 
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            text-align: center;
+        .boton:hover {
+            background-color: #005a9e;
         }
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .foto {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
     </style>
+
 </head>
 
 <body>
 
-    <header>
-        <h1>ACTIVIDAD PRÁCTICA 2</h1>
-        <p>Consulta de estudiantes desde Azure SQL Database</p>
-    </header>
+<header>
 
-    <div class="contenedor">
+    <h1>ACTIVIDAD PRÁCTICA 2</h1>
 
-        <h2>Información de estudiantes</h2>
+    <p>Base de datos en Azure</p>
 
-        <table>
+</header>
 
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Materia</th>
-                <th>Carné</th>
-                <th>Imagen</th>
-            </tr>
+<div class="contenedor">
 
-            <?php while ($fila = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) { ?>
+    <h2>Página de estudiantes</h2>
 
-                <tr>
+    <p>
+        Esta página obtiene información almacenada
+        en una base de datos de Azure SQL.
+    </p>
 
-                    <td>
-                        <?php echo $fila['ID_ESTUDIANTE']; ?>
-                    </td>
+    <a class="boton" href="estudiantes.php">
+        Ver estudiantes
+    </a>
 
-                    <td>
-                        <?php echo htmlspecialchars($fila['NOMBRE']); ?>
-                    </td>
-
-                    <td>
-                        <?php echo htmlspecialchars($fila['MATERIA']); ?>
-                    </td>
-
-                    <td>
-                        <?php echo htmlspecialchars($fila['CARNE']); ?>
-                    </td>
-
-                    <td>
-                        <img
-                            class="foto"
-                            src="<?php echo htmlspecialchars($fila['IMAGEN']); ?>"
-                            alt="Imagen de <?php echo htmlspecialchars($fila['NOMBRE']); ?>"
-                        >
-                    </td>
-
-                </tr>
-
-            <?php } ?>
-
-        </table>
-
-    </div>
+</div>
 
 </body>
 
 </html>
-
-<?php
-
-// Cerrar conexión
-sqlsrv_free_stmt($stmt);
-sqlsrv_close($conn);
-
-?>
