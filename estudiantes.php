@@ -8,63 +8,114 @@ $sql = "SELECT ID_ESTUDIANTE, NOMBRE, MATERIA, CARNE, IMAGEN
 $resultado = sqlsrv_query($conn, $sql);
 
 if ($resultado === false) {
-
-    echo "<p style='color:red;'>Error al realizar la consulta.</p>";
-
-    die(print_r(sqlsrv_errors(), true));
+    die("Error en la consulta:<br><pre>" . print_r(sqlsrv_errors(), true) . "</pre>");
 }
 
-echo "<table>";
+?>
 
-echo "<tr>";
-echo "<th>ID</th>";
-echo "<th>Nombre</th>";
-echo "<th>Materia</th>";
-echo "<th>Carné</th>";
-echo "<th>Imagen</th>";
-echo "</tr>";
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
 
-while ($fila = sqlsrv_fetch_array($resultado, SQLSRV_FETCH_ASSOC)) {
+    <meta charset="UTF-8">
 
-    echo "<tr>";
+    <style>
 
-    echo "<td>";
-    echo $fila["ID_ESTUDIANTE"];
-    echo "</td>";
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: white;
+        }
 
-    echo "<td>";
-    echo htmlspecialchars($fila["NOMBRE"]);
-    echo "</td>";
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    echo "<td>";
-    echo htmlspecialchars($fila["MATERIA"]);
-    echo "</td>";
+        th {
+            background-color: #0078d4;
+            color: white;
+            padding: 12px;
+        }
 
-    echo "<td>";
-    echo htmlspecialchars($fila["CARNE"]);
-    echo "</td>";
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
 
-    echo "<td>";
+        tr:hover {
+            background-color: #f2f2f2;
+        }
 
-    if (!empty($fila["IMAGEN"])) {
+        img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
 
-        echo "<img src='" .
-             htmlspecialchars($fila["IMAGEN"]) .
-             "' width='80' height='80'>";
+    </style>
 
-    } else {
+</head>
 
-        echo "Sin imagen";
+<body>
 
-    }
+<table>
 
-    echo "</td>";
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Materia</th>
+        <th>Carné</th>
+        <th>Imagen</th>
+    </tr>
 
-    echo "</tr>";
-}
+    <?php while ($fila = sqlsrv_fetch_array($resultado, SQLSRV_FETCH_ASSOC)) { ?>
 
-echo "</table>";
+        <tr>
+
+            <td>
+                <?php echo $fila["ID_ESTUDIANTE"]; ?>
+            </td>
+
+            <td>
+                <?php echo htmlspecialchars($fila["NOMBRE"]); ?>
+            </td>
+
+            <td>
+                <?php echo htmlspecialchars($fila["MATERIA"]); ?>
+            </td>
+
+            <td>
+                <?php echo htmlspecialchars($fila["CARNE"]); ?>
+            </td>
+
+            <td>
+
+                <?php if (!empty($fila["IMAGEN"])) { ?>
+
+                    <img src="<?php echo htmlspecialchars($fila["IMAGEN"]); ?>">
+
+                <?php } else { ?>
+
+                    Sin imagen
+
+                <?php } ?>
+
+            </td>
+
+        </tr>
+
+    <?php } ?>
+
+</table>
+
+</body>
+</html>
+
+<?php
 
 sqlsrv_free_stmt($resultado);
 sqlsrv_close($conn);
