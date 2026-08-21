@@ -1,3 +1,18 @@
+<?php
+
+require_once "conexion.php";
+
+$sql = "SELECT ID_ESTUDIANTE, NOMBRE, MATERIA, CARNE, IMAGEN
+        FROM dbo.ESTUDIANTES";
+
+$resultado = sqlsrv_query($conn, $sql);
+
+if ($resultado === false) {
+    die("Error al realizar la consulta.");
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -10,38 +25,48 @@
     <style>
 
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
+            margin: 0;
         }
 
         header {
             background-color: #0078d4;
             color: white;
             text-align: center;
-            padding: 40px;
+            padding: 30px;
         }
 
         .contenedor {
-            width: 70%;
-            margin: 50px auto;
-            background-color: white;
-            padding: 40px;
-            text-align: center;
+            width: 80%;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
             border-radius: 10px;
         }
 
-        .boton {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: #0078d4;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .boton:hover {
-            background-color: #005a9e;
+        th {
+            background-color: #0078d4;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
     </style>
@@ -54,25 +79,83 @@
 
     <h1>ACTIVIDAD PRÁCTICA 2</h1>
 
-    <p>Base de datos en Azure</p>
+    <p>Consulta de estudiantes desde Azure Database</p>
 
 </header>
 
+
 <div class="contenedor">
 
-    <h2>Página de estudiantes</h2>
+    <h2>Estudiantes</h2>
 
-    <p>
-        Esta página obtiene información almacenada
-        en una base de datos de Azure SQL.
-    </p>
+    <table>
 
-    <a class="boton" href="estudiantes.php">
-        Ver estudiantes
-    </a>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Materia</th>
+            <th>Carné</th>
+            <th>Imagen</th>
+        </tr>
+
+
+        <?php
+
+        while ($fila = sqlsrv_fetch_array($resultado, SQLSRV_FETCH_ASSOC)) {
+
+        ?>
+
+        <tr>
+
+            <td>
+                <?php echo $fila["ID_ESTUDIANTE"]; ?>
+            </td>
+
+            <td>
+                <?php echo htmlspecialchars($fila["NOMBRE"]); ?>
+            </td>
+
+            <td>
+                <?php echo htmlspecialchars($fila["MATERIA"]); ?>
+            </td>
+
+            <td>
+                <?php echo htmlspecialchars($fila["CARNE"]); ?>
+            </td>
+
+            <td>
+
+                <?php if (!empty($fila["IMAGEN"])) { ?>
+
+                    <img src="<?php echo htmlspecialchars($fila["IMAGEN"]); ?>">
+
+                <?php } else { ?>
+
+                    Sin imagen
+
+                <?php } ?>
+
+            </td>
+
+        </tr>
+
+        <?php
+
+        }
+
+        ?>
+
+    </table>
 
 </div>
 
 </body>
 
 </html>
+
+<?php
+
+sqlsrv_free_stmt($resultado);
+sqlsrv_close($conn);
+
+?>
