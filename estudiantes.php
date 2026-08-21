@@ -8,158 +8,63 @@ $sql = "SELECT ID_ESTUDIANTE, NOMBRE, MATERIA, CARNE, IMAGEN
 $resultado = sqlsrv_query($conn, $sql);
 
 if ($resultado === false) {
-    die("Error en la consulta:<br><pre>" . print_r(sqlsrv_errors(), true) . "</pre>");
+
+    echo "<p style='color:red;'>Error al realizar la consulta.</p>";
+
+    die(print_r(sqlsrv_errors(), true));
 }
 
-?>
+echo "<table>";
 
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <title>Actividad Práctica 2</title>
-
-    <style>
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-        }
-
-        header {
-            background-color: #0078d4;
-            color: white;
-            text-align: center;
-            padding: 25px;
-        }
-
-        .contenedor {
-            width: 80%;
-            margin: 30px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th {
-            background-color: #0078d4;
-            color: white;
-            padding: 12px;
-        }
-
-        td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-<header>
-
-    <h1>ACTIVIDAD PRÁCTICA 2</h1>
-
-    <p>Estudiantes almacenados en Azure SQL Database</p>
-
-</header>
+echo "<tr>";
+echo "<th>ID</th>";
+echo "<th>Nombre</th>";
+echo "<th>Materia</th>";
+echo "<th>Carné</th>";
+echo "<th>Imagen</th>";
+echo "</tr>";
 
 
-<div class="contenedor">
+while ($fila = sqlsrv_fetch_array($resultado, SQLSRV_FETCH_ASSOC)) {
 
-    <h2>Lista de estudiantes</h2>
+    echo "<tr>";
 
-    <table>
+    echo "<td>";
+    echo $fila["ID_ESTUDIANTE"];
+    echo "</td>";
 
-        <tr>
+    echo "<td>";
+    echo htmlspecialchars($fila["NOMBRE"]);
+    echo "</td>";
 
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Materia</th>
-            <th>Carné</th>
-            <th>Imagen</th>
+    echo "<td>";
+    echo htmlspecialchars($fila["MATERIA"]);
+    echo "</td>";
 
-        </tr>
+    echo "<td>";
+    echo htmlspecialchars($fila["CARNE"]);
+    echo "</td>";
 
-        <?php
+    echo "<td>";
 
-        while ($fila = sqlsrv_fetch_array($resultado, SQLSRV_FETCH_ASSOC)) {
+    if (!empty($fila["IMAGEN"])) {
 
-        ?>
+        echo "<img src='" .
+             htmlspecialchars($fila["IMAGEN"]) .
+             "' width='80' height='80'>";
 
-        <tr>
+    } else {
 
-            <td>
-                <?php echo $fila["ID_ESTUDIANTE"]; ?>
-            </td>
+        echo "Sin imagen";
 
-            <td>
-                <?php echo htmlspecialchars($fila["NOMBRE"]); ?>
-            </td>
+    }
 
-            <td>
-                <?php echo htmlspecialchars($fila["MATERIA"]); ?>
-            </td>
+    echo "</td>";
 
-            <td>
-                <?php echo htmlspecialchars($fila["CARNE"]); ?>
-            </td>
+    echo "</tr>";
+}
 
-            <td>
-
-                <?php if (!empty($fila["IMAGEN"])) { ?>
-
-                    <img src="<?php echo htmlspecialchars($fila["IMAGEN"]); ?>">
-
-                <?php } else { ?>
-
-                    Sin imagen
-
-                <?php } ?>
-
-            </td>
-
-        </tr>
-
-        <?php
-
-        }
-
-        ?>
-
-    </table>
-
-</div>
-
-</body>
-
-</html>
-
-<?php
+echo "</table>";
 
 sqlsrv_free_stmt($resultado);
 sqlsrv_close($conn);
