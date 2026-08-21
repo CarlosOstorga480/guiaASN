@@ -1,16 +1,9 @@
 <?php
-// ==========================================
-// CONFIGURACIÓN DE LA BASE DE DATOS
-// ==========================================
 
 $servidor = "sql-tilin.database.windows.net";
 $base_datos = "BD-BENITO";
-$usuario = "TU_USUARIO";
-$password = "TU_CONTRASEÑA";
-
-// ==========================================
-// CONEXIÓN A AZURE SQL
-// ==========================================
+$usuario = "adminsql";
+$password = "mVqivAdd1234";
 
 $serverName = "tcp:" . $servidor . ",1433";
 
@@ -28,9 +21,7 @@ if ($conn === false) {
     die("Error al conectar con la base de datos.");
 }
 
-// ==========================================
-// CONSULTA
-// ==========================================
+
 
 $sql = "SELECT ID_ESTUDIANTE, NOMBRE, MATERIA, CARNE, IMAGEN
         FROM dbo.ESTUDIANTES";
