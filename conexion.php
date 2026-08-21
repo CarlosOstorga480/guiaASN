@@ -12,7 +12,7 @@ $connectionOptions = array(
 $conn = sqlsrv_connect($serverName, $connectionOptions);
 
 if ($conn === false) {
-    die("Error de conexión con Azure SQL:<br><pre>" . print_r(sqlsrv_errors(), true) . "</pre>");
+    die("Error al conectar con Azure SQL.");
 }
 
 ?>
