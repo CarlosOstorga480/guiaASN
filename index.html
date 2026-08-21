@@ -1,33 +1,18 @@
-<?php
-
-require_once "conexion.php";
-
-$sql = "SELECT ID_ESTUDIANTE, NOMBRE, MATERIA, CARNE, IMAGEN
-        FROM dbo.ESTUDIANTES";
-
-$resultado = sqlsrv_query($conn, $sql);
-
-if ($resultado === false) {
-    die("Error al realizar la consulta.");
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Actividad Práctica 2</title>
 
     <style>
 
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
-            margin: 0;
         }
 
         header {
@@ -40,14 +25,36 @@ if ($resultado === false) {
         .contenedor {
             width: 80%;
             margin: 30px auto;
-            background: white;
-            padding: 25px;
+            background-color: white;
+            padding: 30px;
             border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+            text-align: center;
+        }
+
+        button {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005a9e;
+        }
+
+        #resultado {
+            margin-top: 30px;
+            text-align: center;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         th {
@@ -58,19 +65,14 @@ if ($resultado === false) {
 
         td {
             padding: 12px;
-            text-align: center;
             border-bottom: 1px solid #ddd;
         }
 
-        img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 50%;
+        tr:hover {
+            background-color: #f2f2f2;
         }
 
     </style>
-
 </head>
 
 <body>
@@ -79,83 +81,65 @@ if ($resultado === false) {
 
     <h1>ACTIVIDAD PRÁCTICA 2</h1>
 
-    <p>Consulta de estudiantes desde Azure Database</p>
+    <p>Base de datos en Azure</p>
 
 </header>
 
 
 <div class="contenedor">
 
-    <h2>Estudiantes</h2>
+    <h2>Consulta de estudiantes</h2>
 
-    <table>
+    <p>
+        Presiona el botón para consultar los datos
+        almacenados en Azure SQL Database.
+    </p>
 
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Materia</th>
-            <th>Carné</th>
-            <th>Imagen</th>
-        </tr>
+    <button onclick="cargarEstudiantes()">
+        Mostrar estudiantes
+    </button>
 
-
-        <?php
-
-        while ($fila = sqlsrv_fetch_array($resultado, SQLSRV_FETCH_ASSOC)) {
-
-        ?>
-
-        <tr>
-
-            <td>
-                <?php echo $fila["ID_ESTUDIANTE"]; ?>
-            </td>
-
-            <td>
-                <?php echo htmlspecialchars($fila["NOMBRE"]); ?>
-            </td>
-
-            <td>
-                <?php echo htmlspecialchars($fila["MATERIA"]); ?>
-            </td>
-
-            <td>
-                <?php echo htmlspecialchars($fila["CARNE"]); ?>
-            </td>
-
-            <td>
-
-                <?php if (!empty($fila["IMAGEN"])) { ?>
-
-                    <img src="<?php echo htmlspecialchars($fila["IMAGEN"]); ?>">
-
-                <?php } else { ?>
-
-                    Sin imagen
-
-                <?php } ?>
-
-            </td>
-
-        </tr>
-
-        <?php
-
-        }
-
-        ?>
-
-    </table>
+    <div id="resultado"></div>
 
 </div>
+
+
+<script>
+
+function cargarEstudiantes() {
+
+    document.getElementById("resultado").innerHTML =
+        "<p>Cargando información...</p>";
+
+    fetch("estudiantes.php")
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("Error al conectar con PHP");
+            }
+
+            return response.text();
+
+        })
+
+        .then(data => {
+
+            document.getElementById("resultado").innerHTML = data;
+
+        })
+
+        .catch(error => {
+
+            document.getElementById("resultado").innerHTML =
+                "<p style='color:red;'>Error: " + error.message + "</p>";
+
+        });
+
+}
+
+</script>
 
 </body>
 
 </html>
-
-<?php
-
-sqlsrv_free_stmt($resultado);
-sqlsrv_close($conn);
-
-?>
